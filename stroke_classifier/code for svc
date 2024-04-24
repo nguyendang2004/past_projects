@@ -1,0 +1,86 @@
+from sklearn.datasets import make_circles, make_classification, make_moons
+from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
+from sklearn.ensemble import AdaBoostClassifier, RandomForestClassifier
+from sklearn.gaussian_process import GaussianProcessClassifier
+from sklearn.gaussian_process.kernels import RBF
+from sklearn.inspection import DecisionBoundaryDisplay
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neural_network import MLPClassifier
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score, ConfusionMatrixDisplay
+from sklearn.linear_model import LogisticRegression
+import time
+import numpy as np
+
+
+
+names = [
+    "Poly SVM of degree 3",
+    "Poly SVM of degree 4",
+    "Linear SVM",
+    "rbf SVM",
+]
+
+classifiers = [
+    SVC(kernel="poly", C=0.025, random_state=42),
+    SVC(kernel="poly", degree =4, C=0.025, random_state=42),
+    SVC(kernel="linear", C=0.025, random_state=42),
+    SVC(kernel="rbf", C=0.025, random_state=42),
+]
+
+classifiers2 = [
+    SVC(kernel="poly", C=0.025, random_state=42),
+    SVC(kernel="poly", degree =4, C=0.025, random_state=42),
+    SVC(kernel="linear", C=0.025, random_state=42),
+    SVC(kernel="rbf", C=0.025, random_state=42),
+]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    general_x, Y, test_size=0.3, random_state=42
+)
+
+X_train2, X_test2, y_train2, y_test2 = train_test_split(
+    specific_x, Y, test_size=0.3, random_state=42
+)
+
+general_accuracies = []
+specific_accuracies = []
+
+general_confusion = []
+specific_confusion = []
+
+
+# iterate over classifiers
+for name, clf, clf2 in zip(names, classifiers, classifiers2):
+    print(f"{name}:")
+    t0 = time.time()
+    clf.fit(X_train, y_train)
+    t1 = time.time()
+    y_pred = clf.predict(X_test)
+    t2 = time.time()
+    accuracy = accuracy_score(y_test, y_pred)
+    general_accuracies.append(accuracy)
+    general_confusion.append((y_test, y_pred))
+    print(f"General Accuracy: {round(accuracy*100,1)}%")
+    print(f"Took {round((t1-t0) * 1000, 1)} ms to train")
+    print(f"Took {round((t2-t1) * 1000, 1)} ms to run\n")
+    
+    t0 = time.time()
+    clf2.fit(X_train2, y_train2)
+    t1 = time.time()
+    y_pred2 = clf2.predict(X_test2)
+    t2 = time.time()
+    accuracy = accuracy_score(y_test2, y_pred2)
+    specific_accuracies.append(accuracy)
+    specific_confusion.append((y_test2, y_pred2))
+    print(f"Specific Accuracy: {round(accuracy*100,1)}%")
+    print(f"Took {round((t1-t0) * 1000, 1)} ms to train")
+    print(f"Took {round((t2-t1) * 1000, 1)} ms to run\n\n")
+    
+
+    
